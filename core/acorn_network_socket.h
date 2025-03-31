@@ -83,56 +83,39 @@ public:
             try {
                 Msock = acorn_createSocket();
                 std::cout << "Socket Created" << std::endl;
-            }
-            catch (const std::runtime_error& e) {
+            } catch (const std::runtime_error& e) {
                 std::cerr << e.what() << std::endl;
-                close(Msock);
+                if (Msock != -1) close(Msock);  // Ensure cleanup
                 continue;
-            }
-            catch(...) 
-            {
-                std::cout << "Undefined Error on Socket Creation" << std::endl;
             }
             try {
                 acorn_setSocket_Reuse(Msock);
                 std::cout << "Socket Set" << std::endl;
-            }
-            catch (const std::runtime_error& e) {
+            } catch (const std::runtime_error& e) {
                 std::cerr << e.what() << std::endl;
+                if ( Mcck != -1) close(Msock);  // Ensure cleanup
                 continue;
-            }
-            catch(...) 
-            {
-                std::cout << "Undefined Error on Socket Set" << std::endl;
             }
             try {
                 acorn_bindSocket(Msock, addrPort);
                 std::cout << "Socket Bound" << std::endl;
-            }
-            catch (const std::runtime_error& e) {
+            } catch (const std::runtime_error& e) {
                 std::cerr << e.what() << std::endl;
+                if (Msock != -1) close(Msock);  // Ensure cleanup
                 continue;
-            }
-            catch(...) 
-            {
-                std::cout << "Undefined Error on Socket Bound" << std::endl;
             }
             try {
                 acorn_listenSocket(Msock);
                 std::cout << "Socket listening" << std::endl;
-            }
-            catch (const std::runtime_error& e) {
+            } catch (const std::runtime_error& e) {
                 std::cerr << e.what() << std::endl;
+                if (Msock != -1) close(Msock);  // Ensure cleanup
                 continue;
             }
-            catch(...) 
-            {
-                std::cout << "Undefined Error on Socket listener" << std::endl;
-            }
-            _msock.push_back(Msock);             
+            _msock.push_back(Msock);
             std::cout << "socket: " << Msock << " Address: " << addrPort.first << " Port: " << addrPort.second << std::endl;
-        } 
-    }     
+        }
+    }    
 
     ~acorn_socket() {
         for (const auto& Sock : _msock)

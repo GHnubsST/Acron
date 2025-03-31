@@ -14,12 +14,12 @@
 *   limitations under the License.
 */
 
-bool running = true;
-
 #include "acorn_headers.h"
 #include "acorn_module_http.h"
 #include "acorn_network_socket.h"
 #include "acorn_network_epoll.h"
+
+bool running = true;
 
 void signalHandler(int signum) {
     std::cout << "Interrupt signal (" << signum << ") received.\n";
@@ -42,17 +42,12 @@ int main() {
     try {
         epoll_init.acorn_createEpoll();
         epoll_init.acorn_epollAddMSocket(listen._msock);
-        epoll_init.acorn_epollEventsReady();
-    }
-    catch (const std::runtime_error& e) {
+        epoll_init.acorn_epollEventsReady();  // Blocks until running = false
+    } catch (const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
-    }
-    catch(...) 
-    {
-        std::cout << "Undefined Error on startup" << std::endl;
+        return 1;
     }
 
     std::cout << "Acorn Closed." << std::endl;
-
     return 0;
-};
+}
